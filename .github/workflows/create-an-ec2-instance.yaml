@@ -19,7 +19,9 @@ on:
         type: string
       port_context:
         required: true
+        type: string
         description: includes blueprint, run ID, and entity identifier from Port.
+
 jobs:
   provision-ec2:
     runs-on: ubuntu-latest
@@ -37,7 +39,7 @@ jobs:
           operation: PATCH_RUN
           runId: ${{ fromJson(inputs.port_context).run_id }}
           logMessage: |
-              About to create ec2 instance ${{ github.event.inputs.ec2_name }} .. ⛴️
+            About to create ec2 instance ${{ github.event.inputs.ec2_name }} .. ⛴️
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -52,9 +54,9 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Apply
-        id:   apply
+        id: apply
         env:
-          TF_VAR_ec2_name:  "${{ github.event.inputs.ec2_name }}"
+          TF_VAR_ec2_name: "${{ github.event.inputs.ec2_name }}"
           TF_VAR_pem_key_name: "${{ github.event.inputs.pem_key_name}}"
           TF_VAR_aws_region: "${{ secrets.TF_USER_AWS_REGION }}"
           TF_VAR_ec2_instance_type: "${{ github.event.inputs.ec2_instance_type}}"
@@ -93,9 +95,9 @@ jobs:
           operation: PATCH_RUN
           runId: ${{ fromJson(inputs.port_context).run_id }}
           logMessage: |
-              EC2 Instance created successfully ✅
+            EC2 Instance created successfully ✅
 
-     - name: Report Created Instance to Port
+      - name: Report Created Instance to Port
         uses: port-labs/port-github-action@v1
         with:
           clientId: ${{ secrets.PORT_CLIENT_ID }}
@@ -108,7 +110,7 @@ jobs:
       - name: UPSERT EC2 Instance Entity
         uses: port-labs/port-github-action@v1
         with:
-          identifier: "${{ steps.display_outputs.outputs.instance_id }}"
+          identifier: "${{ steps.set_outputs.outputs.instance_id }}"
           title: "${{ inputs.ec2_name }}"
           blueprint: ${{ fromJson(inputs.port_context).blueprint }}
           properties: |-
