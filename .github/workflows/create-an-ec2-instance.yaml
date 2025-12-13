@@ -61,16 +61,19 @@ jobs:
           TF_VAR_aws_region: "${{ secrets.TF_USER_AWS_REGION }}"
           TF_VAR_ec2_instance_type: "${{ github.event.inputs.ec2_instance_type}}"
         run: |
-          cd <TERRAFORM-TEMPLATE-DIR>
+          cd tf
           terraform init
           terraform validate
           terraform plan
           terraform apply -auto-approve
 
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
       - name: Set Outputs
         id: set_outputs
         run: |
-          cd <TERRAFORM-TEMPLATE-DIR>
+          cd tf
           echo "instance_id=$(terraform output -raw instance_id)" >> $GITHUB_ENV
           echo "instance_state=$(terraform output -raw instance_state)" >> $GITHUB_ENV
           echo "instance_type=$(terraform output -raw instance_type)" >> $GITHUB_ENV
@@ -110,7 +113,8 @@ jobs:
       - name: UPSERT EC2 Instance Entity
         uses: port-labs/port-github-action@v1
         with:
-          identifier: "${{ steps.set_outputs.outputs.instance_id }}"
+          identifier: "${{ env.instance_id }}"
+
           title: "${{ inputs.ec2_name }}"
           blueprint: ${{ fromJson(inputs.port_context).blueprint }}
           properties: |-
