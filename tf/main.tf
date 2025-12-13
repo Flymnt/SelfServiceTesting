@@ -24,6 +24,8 @@ resource "aws_instance" "app_server" {
   key_name      = var.pem_key_name
 
   tags = {
-    Name = var.ec2_name
+    Name    = var.ec2_name
+    creator = "true"
+    Creator = "roy.manor@flexera.com"
   }
 }
