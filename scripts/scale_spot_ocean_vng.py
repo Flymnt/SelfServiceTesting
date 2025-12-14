@@ -98,15 +98,10 @@ class SpotOceanScaler:
             print(f"⚠️  Warning: Could not fetch current Launch Spec config: {str(e)}")
             current_launch_spec = {}
         
-        # Build update payload - preserving existing config and updating resourceLimits
+        # Build update payload with only resourceLimits (API rejects other fields)
         update_payload = {
             "launchSpec": {
-                # Preserve existing configuration
-                **current_launch_spec,
-                
-                # Update resource limits (min and max instance counts)
                 "resourceLimits": {
-                    **(current_launch_spec.get("resourceLimits", {})),
                     "minInstanceCount": min_capacity,
                     "maxInstanceCount": max_capacity,
                 }
