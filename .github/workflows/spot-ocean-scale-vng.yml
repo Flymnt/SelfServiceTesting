@@ -1,0 +1,52 @@
+name: Scale Spot Ocean VNG Capacity
+
+on:
+  workflow_dispatch:
+    inputs:
+      vng_id:
+        description: 'Virtual Node Group ID (Launch Spec ID, e.g., ols-a1b2c3d4)'
+        required: true
+        type: string
+      min_capacity:
+        description: 'Minimum capacity (number of nodes)'
+        required: true
+        type: string
+      max_capacity:
+        description: 'Maximum capacity (number of nodes)'
+        required: true
+        type: string
+      reason:
+        description: 'Reason for scaling'
+        required: true
+        type: string
+      triggered_by:
+        description: 'User email who triggered the action'
+        required: false
+        type: string
+
+jobs:
+  scale-ocean-vng:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: pip install requests==2.31.0
+      
+      - name: Scale Ocean VNG
+        env:
+          SPOT_TOKEN: ${{ secrets.SPOT_TOKEN }}
+          SPOT_ACCOUNT_ID: ${{ secrets.SPOT_ACCOUNT_ID }}
+          VNG_ID: ${{ inputs.vng_id }}
+          MIN_CAPACITY: ${{ inputs.min_capacity }}
+          MAX_CAPACITY: ${{ inputs.max_capacity }}
+          REASON: ${{ inputs.reason }}
+          TRIGGERED_BY: ${{ inputs.triggered_by }}
+        run: python3 scripts/scale_spot_ocean_vng.py
