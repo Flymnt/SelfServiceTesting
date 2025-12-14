@@ -3,10 +3,6 @@ name: Scale Spot Ocean VNG Capacity
 on:
   workflow_dispatch:
     inputs:
-      vng_id:
-        description: 'Virtual Node Group ID (Launch Spec ID, e.g., ols-a1b2c3d4)'
-        required: true
-        type: string
       min_capacity:
         description: 'Minimum capacity (number of nodes)'
         required: true
@@ -44,7 +40,7 @@ jobs:
         env:
           SPOT_TOKEN: ${{ secrets.SPOT_TOKEN }}
           SPOT_ACCOUNT_ID: ${{ secrets.SPOT_ACCOUNT_ID }}
-          VNG_ID: ${{ inputs.vng_id }}
+          VNG_ID: ols-8000bc38
           MIN_CAPACITY: ${{ inputs.min_capacity }}
           MAX_CAPACITY: ${{ inputs.max_capacity }}
           REASON: ${{ inputs.reason }}
